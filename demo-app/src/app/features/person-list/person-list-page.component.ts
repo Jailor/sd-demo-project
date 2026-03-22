@@ -13,6 +13,8 @@ import {
 } from '../../components/person-form-dialog/person-form-dialog.component';
 import { CreatePersonDto, Person, UpdatePersonDto } from '../../models/person.model';
 import { PersonListStore } from './person-list.store';
+import { Router } from '@angular/router';
+import { LoginStore } from '../login/login.store';
 
 @Component({
   selector: 'app-person-list-page',
@@ -24,6 +26,8 @@ import { PersonListStore } from './person-list.store';
 export class PersonListPageComponent {
   private readonly dialog = inject(MatDialog);
   private readonly store = inject(PersonListStore);
+  private readonly loginStore = inject(LoginStore);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly persons = this.store.persons;
@@ -33,6 +37,11 @@ export class PersonListPageComponent {
 
   constructor() {
     this.store.load();
+  }
+
+  protected logout(): void {
+    this.loginStore.logout();
+    void this.router.navigate(['/login']);
   }
 
   protected openCreateDialog(): void {
