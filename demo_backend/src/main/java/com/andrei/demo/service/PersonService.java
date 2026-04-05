@@ -4,6 +4,7 @@ import com.andrei.demo.config.ValidationException;
 import com.andrei.demo.model.Person;
 import com.andrei.demo.model.PersonCreateDTO;
 import com.andrei.demo.repository.PersonRepository;
+import com.andrei.demo.util.PasswordUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class PersonService {
     private final PersonRepository personRepository;
+    private final PasswordUtil passwordUtil;
 
     public List<Person> getPeople() {
         return personRepository.findAll();
@@ -26,7 +28,8 @@ public class PersonService {
         person.setName(personDTO.getName());
         person.setAge(personDTO.getAge());
         person.setEmail(personDTO.getEmail());
-        person.setPassword(personDTO.getPassword());
+        String hashedPassword = passwordUtil.hashPassword(personDTO.getPassword());
+        person.setPassword(hashedPassword);
 
         return personRepository.save(person);
     }
@@ -43,24 +46,10 @@ public class PersonService {
         existingPerson.setName(person.getName());
         existingPerson.setAge(person.getAge());
         existingPerson.setEmail(person.getEmail());
-        existingPerson.setPassword(person.getPassword());
+        String hashedPassword = passwordUtil.hashPassword(person.getPassword());
+        existingPerson.setPassword(hashedPassword);
 
         return personRepository.save(existingPerson);
-    }
-
-    public Person updatePerson2(UUID uuid, Person person) throws ValidationException{
-        return personRepository
-                        .findById(uuid)
-                        .map(existingPerson -> {
-                            existingPerson.setName(person.getName());
-                            existingPerson.setAge(person.getAge());
-                            existingPerson.setEmail(person.getEmail());
-                            existingPerson.setPassword(person.getPassword());
-                            return personRepository.save(existingPerson);
-                        })
-                        .orElseThrow(
-                                () -> new ValidationException("Person with id " + uuid + " not found")
-                        );
     }
 
     public void deletePerson(UUID uuid) {
