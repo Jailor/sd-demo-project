@@ -1,0 +1,33 @@
+<section class="container">
+  <h2>Skills</h2>
+  <button (click)="openForm()">Add Skill</button>
+  <div *ngIf="errorMessage() as err" class="error">{{ err }}</div>
+  <table>
+    <thead>
+      <tr><th>Name</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      @for (skill of skills(); track skill.id) {
+        <tr>
+          <td>{{ skill.name }}</td>
+          <td>
+            <button (click)="openForm(skill)">Edit</button>
+            <button (click)="deleteSkill(skill.id)">Delete</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  @if (showForm()) {
+    <form (ngSubmit)="submitForm()" class="dialog">
+      <label>
+        Name
+        <input [(ngModel)]="formData().name" name="name" required minlength="2" maxlength="100" />
+      </label>
+      <div *ngIf="errorMessage() as err" class="error">{{ err }}</div>
+      <button type="submit">{{ editingId() ? 'Update' : 'Create' }}</button>
+      <button type="button" (click)="closeForm()">Cancel</button>
+    </form>
+  }
+</section>

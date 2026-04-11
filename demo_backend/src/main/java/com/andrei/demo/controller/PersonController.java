@@ -1,9 +1,10 @@
 package com.andrei.demo.controller;
 
 import com.andrei.demo.config.ValidationException;
-import com.andrei.demo.model.PersonCreateDTO;
-import com.andrei.demo.service.PersonService;
 import com.andrei.demo.model.Person;
+import com.andrei.demo.model.PersonCreateDTO;
+import com.andrei.demo.model.PersonPatchDTO;
+import com.andrei.demo.service.PersonService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -24,19 +25,19 @@ public class PersonController {
     }
 
     @GetMapping("/person/{uuid}")
-    public Person getPersonById(@PathVariable UUID uuid) {
+    public Person getPersonById(@PathVariable UUID uuid) throws ValidationException {
         return personService.getPersonById(uuid);
     }
 
     @GetMapping("/person/email/{email}")
-    public Person getPersonByEmail(@PathVariable String email) {
+    public Person getPersonByEmail(@PathVariable String email) throws ValidationException {
         return personService.getPersonByEmail(email);
     }
 
     @PostMapping("/person")
     public Person addPerson(
             @Valid @RequestBody PersonCreateDTO personDTO
-    ) {
+    ) throws ValidationException {
         return personService.addPerson(personDTO);
     }
 
@@ -50,6 +51,14 @@ public class PersonController {
     @DeleteMapping("/person/{uuid}")
     public void deletePerson(@PathVariable UUID uuid) {
         personService.deletePerson(uuid);
+    }
+
+    @PatchMapping("/person/{uuid}")
+    public Person patchPerson(
+            @PathVariable UUID uuid,
+            @RequestBody PersonPatchDTO dto
+    ) throws ValidationException {
+        return personService.patchPerson(uuid, dto);
     }
 
 }
