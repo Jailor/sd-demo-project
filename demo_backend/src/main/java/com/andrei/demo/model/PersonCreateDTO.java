@@ -25,6 +25,7 @@ public class PersonCreateDTO {
     @NotBlank(message = "Email is required")
     private String email;
 
-    private UUID departmentId;          // NEW
-    private List<UUID> projectIds;      // NEW
+    private UUID departmentId;
+    private List<UUID> projectIds;
+    private String role;
 }

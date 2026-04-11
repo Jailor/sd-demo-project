@@ -5,7 +5,7 @@ import { Person } from '../models/person.model';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
-  private apiUrl = 'http://localhost:8080/person';
+  private apiUrl = 'http://localhost:8082/person';
 
   constructor(private http: HttpClient) {}
 

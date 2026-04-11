@@ -1,6 +1,3 @@
-<mat-toolbar color="primary">
-  <span>Person Manager</span>
-</mat-toolbar>
 <main class="content">
   <header class="page-header">
     <div>
@@ -17,6 +14,38 @@
       New Person
     </button>
   </header>
+
+  <!-- Search / Filter / Order controls -->
+  <section class="filter-bar" aria-label="Filter and search controls">
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Search by name</mat-label>
+      <input matInput [ngModel]="nameFilter()" (ngModelChange)="nameFilter.set($event)" placeholder="e.g. John" />
+      <mat-icon matPrefix>search</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field filter-small">
+      <mat-label>Min age</mat-label>
+      <input matInput type="number" [ngModel]="minAge()" (ngModelChange)="minAge.set($event)" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field filter-small">
+      <mat-label>Max age</mat-label>
+      <input matInput type="number" [ngModel]="maxAge()" (ngModelChange)="maxAge.set($event)" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field filter-small">
+      <mat-label>Sort by</mat-label>
+      <mat-select [ngModel]="sortField()" (ngModelChange)="sortField.set($event)">
+        <mat-option value="name">Name</mat-option>
+        <mat-option value="age">Age</mat-option>
+        <mat-option value="email">Email</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-icon-button (click)="toggleSort(sortField())" [attr.aria-label]="'Toggle sort direction'">
+      <mat-icon>{{ getSortIcon(sortField()) }}</mat-icon>
+    </button>
+  </section>
 
   @if (isLoading()) {
     <p class="loading-status" role="status" aria-live="polite">Loading people...</p>
@@ -38,17 +67,29 @@
   >
     <table mat-table [dataSource]="persons()" aria-label="Persons table">
       <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef scope="col">Name</th>
+        <th mat-header-cell *matHeaderCellDef scope="col">
+          <button class="sort-header" (click)="toggleSort('name')">
+            Name <mat-icon class="sort-icon">{{ getSortIcon('name') }}</mat-icon>
+          </button>
+        </th>
         <td mat-cell *matCellDef="let person">{{ person.name }}</td>
       </ng-container>
 
       <ng-container matColumnDef="age">
-        <th mat-header-cell *matHeaderCellDef scope="col">Age</th>
+        <th mat-header-cell *matHeaderCellDef scope="col">
+          <button class="sort-header" (click)="toggleSort('age')">
+            Age <mat-icon class="sort-icon">{{ getSortIcon('age') }}</mat-icon>
+          </button>
+        </th>
         <td mat-cell *matCellDef="let person">{{ person.age }}</td>
       </ng-container>
 
       <ng-container matColumnDef="email">
-        <th mat-header-cell *matHeaderCellDef scope="col">Email</th>
+        <th mat-header-cell *matHeaderCellDef scope="col">
+          <button class="sort-header" (click)="toggleSort('email')">
+            Email <mat-icon class="sort-icon">{{ getSortIcon('email') }}</mat-icon>
+          </button>
+        </th>
         <td mat-cell *matCellDef="let person">{{ person.email }}</td>
       </ng-container>
 

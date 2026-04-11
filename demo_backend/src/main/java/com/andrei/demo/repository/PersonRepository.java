@@ -22,5 +22,7 @@ public interface PersonRepository extends JpaRepository<Person, UUID> {
     List<Person> findByNameApproximate(String name);
 
     List<Person> findByNameStartingWithOrNameEndingWith(String start, String end);
+
+    boolean existsByDepartmentId(UUID departmentId);
 }
 

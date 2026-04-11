@@ -13,7 +13,7 @@ export interface SkillCreateDTO {
 
 @Injectable({ providedIn: 'root' })
 export class SkillService {
-  private readonly apiUrl = '/skill';
+  private readonly apiUrl = 'http://localhost:8082/skill';
 
   constructor(private http: HttpClient) {}
 

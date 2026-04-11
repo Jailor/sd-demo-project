@@ -13,7 +13,7 @@ export interface DepartmentCreateDTO {
 
 @Injectable({ providedIn: 'root' })
 export class DepartmentService {
-  private readonly apiUrl = '/department';
+  private readonly apiUrl = 'http://localhost:8082/department';
 
   constructor(private http: HttpClient) {}
 

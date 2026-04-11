@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { DepartmentService, Department, DepartmentCreateDTO } from '../services/department.service';
 
 @Component({
@@ -9,7 +10,7 @@ import { DepartmentService, Department, DepartmentCreateDTO } from '../services/
   styleUrls: ['./department-list-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
 })
 export class DepartmentListPageComponent {
   protected readonly departments = signal<Department[]>([]);

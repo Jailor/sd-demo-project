@@ -32,6 +32,9 @@ public class Person {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(nullable = false, columnDefinition = "varchar(255) default 'USER'")
+    private String role = "USER";
+
     @ManyToOne
     @JoinColumn(name = "department_id")
     private Department department;

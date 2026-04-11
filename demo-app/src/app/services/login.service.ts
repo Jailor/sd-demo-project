@@ -18,6 +18,6 @@ export class LoginService {
   constructor(private http: HttpClient) {}
 
   login(request: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>('/api/login', request);
+    return this.http.post<LoginResponse>('http://localhost:8082/login', request);
   }
 }

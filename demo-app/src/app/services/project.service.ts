@@ -13,7 +13,7 @@ export interface ProjectCreateDTO {
 
 @Injectable({ providedIn: 'root' })
 export class ProjectService {
-  private readonly apiUrl = '/project';
+  private readonly apiUrl = 'http://localhost:8082/project';
 
   constructor(private http: HttpClient) {}
 

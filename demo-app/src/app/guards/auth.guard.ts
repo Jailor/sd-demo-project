@@ -13,5 +13,7 @@ export const guestGuard: CanActivateFn = () => {
   const loginStore = inject(LoginStore);
   const router = inject(Router);
 
-  return loginStore.isAuthenticated() ? router.createUrlTree(['/people']) : true;
+  if (!loginStore.isAuthenticated()) return true;
+  const target = loginStore.role() === 'ADMIN' ? '/people' : '/departments';
+  return router.createUrlTree([target]);
 };

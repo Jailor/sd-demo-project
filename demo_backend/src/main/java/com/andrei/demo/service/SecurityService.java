@@ -24,7 +24,7 @@ public class SecurityService {
         }
         Person person = maybePerson.get();
         if(person.getPassword().equals(password)) {
-            return new LoginResponse(true, "ADMIN", null);
+            return new LoginResponse(true, person.getRole(), null);
         } else {
             return new LoginResponse(false, null, "Incorrect password");
         }

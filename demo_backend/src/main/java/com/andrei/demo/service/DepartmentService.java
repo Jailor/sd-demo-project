@@ -1,8 +1,10 @@
 package com.andrei.demo.service;
 
+import com.andrei.demo.config.ValidationException;
 import com.andrei.demo.model.Department;
 import com.andrei.demo.model.DepartmentCreateDTO;
 import com.andrei.demo.repository.DepartmentRepository;
+import com.andrei.demo.repository.PersonRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class DepartmentService {
     private final DepartmentRepository departmentRepository;
+    private final PersonRepository personRepository;
 
     public List<Department> getDepartments() {
         return departmentRepository.findAll();
@@ -36,6 +39,9 @@ public class DepartmentService {
     }
 
     public void deleteDepartment(UUID id) {
+        if (personRepository.existsByDepartmentId(id)) {
+            throw new ValidationException("Cannot delete department: it still has persons assigned");
+        }
         departmentRepository.deleteById(id);
     }
 }

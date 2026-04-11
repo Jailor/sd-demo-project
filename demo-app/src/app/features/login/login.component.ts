@@ -45,7 +45,8 @@ export class LoginComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((response) => {
         if (response.success) {
-          this.router.navigate(['/people']);
+          const target = response.role === 'ADMIN' ? '/people' : '/departments';
+          this.router.navigate([target]);
         }
       });
   }

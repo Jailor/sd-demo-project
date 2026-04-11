@@ -68,6 +68,7 @@ public class PersonService {
         person.setPassword(personDTO.getPassword());
         person.setDepartment(department);
         person.setProjects(projects);
+        person.setRole(personDTO.getRole() != null ? personDTO.getRole() : "USER");
 
         return personRepository.save(person);
     }

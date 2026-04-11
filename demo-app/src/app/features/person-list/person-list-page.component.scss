@@ -66,3 +66,36 @@
 .delete-btn {
   color: #c62828;
 }
+
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-field {
+  flex: 1;
+  min-width: 140px;
+}
+
+.filter-small {
+  flex: 0 0 100px;
+  min-width: 100px;
+}
+
+.sort-header {
+  all: unset;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+}
+
+.sort-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
