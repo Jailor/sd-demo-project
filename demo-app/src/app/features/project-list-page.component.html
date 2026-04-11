@@ -1,0 +1,33 @@
+<section class="container">
+  <h2>Projects</h2>
+  <button (click)="openForm()">Add Project</button>
+  <div *ngIf="errorMessage() as err" class="error">{{ err }}</div>
+  <table>
+    <thead>
+      <tr><th>Title</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      @for (project of projects(); track project.id) {
+        <tr>
+          <td>{{ project.title }}</td>
+          <td>
+            <button (click)="openForm(project)">Edit</button>
+            <button (click)="deleteProject(project.id)">Delete</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  @if (showForm()) {
+    <form (ngSubmit)="submitForm()" class="dialog">
+      <label>
+        Title
+        <input [(ngModel)]="formData().title" name="title" required minlength="2" maxlength="100" />
+      </label>
+      <div *ngIf="errorMessage() as err" class="error">{{ err }}</div>
+      <button type="submit">{{ editingId() ? 'Update' : 'Create' }}</button>
+      <button type="button" (click)="closeForm()">Cancel</button>
+    </form>
+  }
+</section>

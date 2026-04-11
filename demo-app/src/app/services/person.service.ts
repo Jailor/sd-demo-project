@@ -1,9 +1,10 @@
+// patch method is defined inside the class below
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CreatePersonDto, Person } from '../models/person.model';
 
-const API_URL = 'http://localhost:8080/person';
+const API_URL = 'http://localhost:8082/person';
 
 @Injectable({ providedIn: 'root' })
 export class PersonService {
@@ -19,6 +20,10 @@ export class PersonService {
 
   update(id: string, dto: CreatePersonDto): Observable<Person> {
     return this.http.put<Person>(`${API_URL}/${id}`, dto);
+  }
+
+  patch(id: string, dto: Partial<CreatePersonDto>): Observable<Person> {
+    return this.http.patch<Person>(`${API_URL}/${id}`, dto);
   }
 
   delete(id: string): Observable<void> {

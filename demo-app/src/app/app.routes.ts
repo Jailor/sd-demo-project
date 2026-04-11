@@ -22,6 +22,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'users',
+    loadComponent: () =>
+      import('./features/user-list-page.component').then(
+        (m) => m.UserListPageComponent,
+      ),
+  },
+  {
     path: 'error',
     loadComponent: () =>
       import('./features/not-found/not-found-page.component').then(

@@ -32,6 +32,7 @@ export class PersonListPageComponent {
 
   protected readonly persons = this.store.persons;
   protected readonly hasError = this.store.hasError;
+  protected readonly errorMessage = this.store.errorMessage;
   protected readonly isLoading = this.store.isLoading;
   protected readonly displayedColumns = ['name', 'age', 'email', 'actions'];
 

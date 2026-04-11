@@ -10,6 +10,7 @@ export class PersonListStore {
 
   readonly persons = signal<Person[]>([]);
   readonly hasError = signal(false);
+  readonly errorMessage = signal<string | null>(null);
   readonly isLoading = computed(() => this.pendingRequests() > 0);
 
   private beginRequest(): void {
@@ -22,50 +23,60 @@ export class PersonListStore {
 
   load(): void {
     this.hasError.set(false);
+    this.errorMessage.set(null);
     this.beginRequest();
     this.personService
       .getAll()
       .pipe(finalize(() => this.endRequest()))
       .subscribe({
         next: (data) => this.persons.set(data),
-        error: () => this.hasError.set(true),
+        error: (err) => {
+          this.hasError.set(true);
+          this.errorMessage.set(
+            err?.error?.details || err?.error?.message || err?.message || 'Unknown error'
+          );
+        },
       });
   }
 
   create(dto: CreatePersonDto): void {
     this.hasError.set(false);
+    this.errorMessage.set(null);
     this.beginRequest();
     this.personService
       .create(dto)
       .pipe(finalize(() => this.endRequest()))
       .subscribe({
         next: (created) => this.persons.update((list) => [...list, created]),
-        error: () => this.hasError.set(true),
+        error: (err) => {
+          this.hasError.set(true);
+          this.errorMessage.set(err?.error?.message || err?.message || 'Unknown error');
+        },
       });
   }
 
-  update(id: string, dto: UpdatePersonDto): void {
-    const existing = this.persons().find((p) => p.id === id);
-    if (!existing) return;
-
-    const payload: CreatePersonDto = { ...dto, password: existing.password };
-
+  update(id: string, dto: Partial<CreatePersonDto>): void {
     this.hasError.set(false);
+    this.errorMessage.set(null);
     this.beginRequest();
     this.personService
-      .update(id, payload)
+      .patch(id, dto)
       .pipe(finalize(() => this.endRequest()))
       .subscribe({
         next: (updated) =>
           this.persons.update((list) =>
             list.map((person) => (person.id === updated.id ? updated : person)),
           ),
-        error: () => this.hasError.set(true),
+        error: (err) => {
+          this.hasError.set(true);
+          this.errorMessage.set(err?.error?.message || err?.message || 'Unknown error');
+        },
       });
   }
 
   remove(id: string): void {
     this.hasError.set(false);
+    this.errorMessage.set(null);
     this.beginRequest();
     this.personService
       .delete(id)
@@ -73,7 +84,10 @@ export class PersonListStore {
       .subscribe({
         next: () =>
           this.persons.update((list) => list.filter((person) => person.id !== id)),
-        error: () => this.hasError.set(true),
+        error: (err) => {
+          this.hasError.set(true);
+          this.errorMessage.set(err?.error?.message || err?.message || 'Unknown error');
+        },
       });
   }
 }

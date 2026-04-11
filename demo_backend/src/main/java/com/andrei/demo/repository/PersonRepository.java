@@ -23,3 +23,4 @@ public interface PersonRepository extends JpaRepository<Person, UUID> {
 
     List<Person> findByNameStartingWithOrNameEndingWith(String start, String end);
 }
+
