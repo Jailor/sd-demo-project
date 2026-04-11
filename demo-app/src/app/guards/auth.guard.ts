@@ -15,3 +15,4 @@ export const guestGuard: CanActivateFn = () => {
 
   return loginStore.isAuthenticated() ? router.createUrlTree(['/people']) : true;
 };
+

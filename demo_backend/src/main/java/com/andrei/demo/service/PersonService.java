@@ -3,9 +3,7 @@ package com.andrei.demo.service;
 import com.andrei.demo.config.ValidationException;
 import com.andrei.demo.model.*;
 import com.andrei.demo.repository.PersonRepository;
-import com.andrei.demo.repository.DepartmentRepository;
-import com.andrei.demo.repository.ProjectRepository;
-import com.andrei.demo.model.PersonPatchDTO;
+import com.andrei.demo.util.PasswordUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +16,7 @@ import java.util.UUID;
 public class PersonService {
 
     private final PersonRepository personRepository;
-    private final DepartmentRepository departmentRepository;
-    private final ProjectRepository projectRepository;
+    private final PasswordUtil passwordUtil;
 
     public List<Person> getPeople() {
         return personRepository.findAll();
@@ -27,7 +24,11 @@ public class PersonService {
 
     public Person addPerson(PersonCreateDTO personDTO) throws ValidationException {
 
-        // COMPLEX VALIDATION START
+        person.setName(personDTO.getName());
+        person.setAge(personDTO.getAge());
+        person.setEmail(personDTO.getEmail());
+        String hashedPassword = passwordUtil.hashPassword(personDTO.getPassword());
+        person.setPassword(hashedPassword);
 
         // 1. Email uniqueness
         if (personRepository.findByEmail(personDTO.getEmail()).isPresent()) {

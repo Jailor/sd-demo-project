@@ -40,13 +40,18 @@ export class LoginComponent {
       this.loginForm.markAllAsTouched();
       return;
     }
+
+    const { email, password } = this.loginForm.getRawValue();
     this.loginStore
-      .login(this.loginForm.getRawValue())
+      .login({ email: email.trim(), password })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((response) => {
-        if (response.success) {
-          this.router.navigate(['/people']);
+        if (!response.success) {
+          return;
         }
+
+        void this.router.navigate(['/people']);
       });
   }
 }
+

@@ -38,9 +38,14 @@
         <p class="error-message" role="alert" aria-live="assertive">{{ errorMessage() }}</p>
       }
 
-      <button mat-raised-button color="primary" class="full-width" [disabled]="isSubmitting()">
-        Sign in
+      <button mat-flat-button color="primary" type="submit" [disabled]="isSubmitting()">
+        @if (isSubmitting()) {
+          Signing in...
+        } @else {
+          Sign in
+        }
       </button>
     </form>
   </mat-card>
 </main>
+

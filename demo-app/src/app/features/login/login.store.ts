@@ -1,11 +1,11 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { catchError, finalize, Observable, of, tap } from 'rxjs';
 import { LoginRequest, LoginResponse, LoginService } from '../../services/login.service';
 
 interface AuthSnapshot {
-  isAuthenticated: boolean;
   role: string | null;
+  token: string;
 }
 
 const STORAGE_KEY = 'demo-app-auth';
@@ -16,7 +16,8 @@ export class LoginStore {
 
   readonly isSubmitting = signal(false);
   readonly errorMessage = signal<string | null>(null);
-  readonly isAuthenticated = signal(false);
+  readonly token = signal<string | null>(null);
+  readonly isAuthenticated = computed(() => this.token() !== null);
   readonly role = signal<string | null>(null);
 
   constructor() {
@@ -39,53 +40,84 @@ export class LoginStore {
   }
 
   logout(): void {
-    this.isAuthenticated.set(false);
-    this.role.set(null);
-    localStorage.removeItem(STORAGE_KEY);
+    this.clearSession();
   }
 
   private applyResponse(response: LoginResponse): void {
-    if (response.success) {
-      this.isAuthenticated.set(true);
+    if (response.success && response.token) {
+      this.token.set(response.token);
       this.role.set(response.role);
-      this.saveAuthState();
-    } else {
-      this.isAuthenticated.set(false);
-      this.role.set(null);
-      this.errorMessage.set(response.errorMessage);
+      this.errorMessage.set(null);
+      this.persistAuthState();
+      return;
     }
-  }
 
-  private saveAuthState(): void {
-    const snapshot: AuthSnapshot = {
-      isAuthenticated: this.isAuthenticated(),
-      role: this.role(),
-    };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
-  }
-
-  private restoreAuthState(): void {
-    const data = localStorage.getItem(STORAGE_KEY);
-    if (data) {
-      try {
-        const snapshot: AuthSnapshot = JSON.parse(data);
-        this.isAuthenticated.set(snapshot.isAuthenticated);
-        this.role.set(snapshot.role);
-      } catch {
-        this.isAuthenticated.set(false);
-        this.role.set(null);
-      }
-    }
+    this.clearSession(response.errorMessage ?? 'Login failed. Please try again.');
   }
 
   private normalizeError(error: unknown): LoginResponse {
     if (error instanceof HttpErrorResponse && error.error) {
-      return error.error as LoginResponse;
+      const maybeError = error.error as Partial<LoginResponse>;
+      if (typeof maybeError.success === 'boolean') {
+        return {
+          success: maybeError.success,
+          role: maybeError.role ?? null,
+          token: maybeError.token ?? null,
+          errorMessage:
+            maybeError.errorMessage ??
+            (error.status === 401
+              ? 'Invalid email or password.'
+              : 'Unable to complete login. Please try again.'),
+        };
+      }
     }
+
     return {
       success: false,
       role: null,
-      errorMessage: 'An unknown error occurred.',
+      token: null,
+      errorMessage: 'Unable to complete login. Please try again.',
     };
+  }
+
+  private restoreAuthState(): void {
+    const stored = sessionStorage.getItem(STORAGE_KEY);
+    if (!stored) {
+      return;
+    }
+
+    try {
+      const snapshot = JSON.parse(stored) as AuthSnapshot;
+      if (!snapshot.token) {
+        this.clearSession();
+        return;
+      }
+
+      this.token.set(snapshot.token);
+      this.role.set(snapshot.role ?? null);
+    } catch {
+      this.clearSession();
+    }
+  }
+
+  private persistAuthState(): void {
+    const token = this.token();
+    if (!token) {
+      return;
+    }
+
+    const snapshot: AuthSnapshot = {
+      role: this.role(),
+      token,
+    };
+
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
+  }
+
+  private clearSession(errorMessage: string | null = null): void {
+    this.token.set(null);
+    this.role.set(null);
+    this.errorMessage.set(errorMessage);
+    sessionStorage.removeItem(STORAGE_KEY);
   }
 }
