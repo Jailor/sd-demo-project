@@ -1,5 +1,7 @@
 <section class="container">
-  <a routerLink="/users"><button>Go to User Admin Panel</button></a>
+  @if (loginStore.role() === 'ADMIN') {
+    <a routerLink="/users"><button>Go to User Admin Panel</button></a>
+  }
   <h2>Departments</h2>
   <button (click)="openForm()">Add Department</button>
   <div *ngIf="errorMessage() as err" class="error">{{ err }}</div>

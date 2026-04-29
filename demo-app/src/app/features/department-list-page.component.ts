@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { DepartmentService, Department, DepartmentCreateDTO } from '../services/department.service';
+import { LoginStore } from './login/login.store';
 
 @Component({
   selector: 'app-department-list-page',
@@ -19,6 +20,7 @@ export class DepartmentListPageComponent {
   protected readonly showForm = signal(false);
   protected readonly formData = signal<DepartmentCreateDTO>({ name: '' });
   protected readonly editingId = signal<string | null>(null);
+  protected readonly loginStore = inject(LoginStore);
 
   private readonly departmentService = inject(DepartmentService);
 
